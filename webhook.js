@@ -65,10 +65,12 @@ webhookRouter.post('/', async (req, res) => {
 			}
 			commands.push('npm run build');
 		}
-		commands.push('npm start');
+		commands.push('cd ..', 'npm start');
 
 		const cmd = commands.join(' && ');
+		console.debug('Command to run:', cmd);
 		exec(cmd);
+		// You can setup alerts, log it better, anything you want to
 
 		res.send('');
 	} catch (error) {
