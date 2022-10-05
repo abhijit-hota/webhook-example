@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 
+// Get the SECRET from the .env file
 dotenv.config();
 const SECRET = process.env.GH_WEBHOOK_SECRET;
 
@@ -12,15 +13,17 @@ const webhookRouter = express.Router();
 
 webhookRouter.use(
 	'/',
+	// We store the raw buffer because the signature integrity gets lost after parsing
 	bodyParser.json({
 		verify: (req, res, buf) => {
 			req.rawBody = buf;
 		},
 	}),
+	// Verify the signature to know that this is actually from GitHub
 	(req, res, next) => {
 		try {
 			const body = Buffer.from(req.rawBody, 'utf8');
-			const ghSign = req.headers['x-hub-signature-256'];
+			const ghSign = req.get('x-hub-signature-256');
 			const ourSign = 'sha256=' + crypto.createHmac('sha256', SECRET).update(body).digest('hex');
 			if (ghSign !== ourSign) {
 				throw new Error();
@@ -36,6 +39,7 @@ webhookRouter.use(
 webhookRouter.post('/', async (req, res) => {
 	try {
 		const { head_commit: commit, repository } = req.body;
+		console.debug(req.body);
 		if (commit.message.startsWith('deploy')) {
 			const repo = repository.name.replace('internfair-', '');
 			const requiresInstall = commit.modified.includes('package.json');
