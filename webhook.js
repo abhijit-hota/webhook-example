@@ -51,15 +51,15 @@ webhookRouter.post('/', async (req, res) => {
 		const commands = [`cd ${__dirname}`, 'git pull --all', 'git checkout main'];
 		const changes = [...commit.modified, ...commit.added, ...commit.removed];
 
-		const requiresReinstall = changes.any((change) => change.startsWith('package'));
+		const requiresReinstall = changes.some((change) => change.startsWith('package'));
 		if (requiresReinstall) {
 			commands.push('npm install');
 		}
 
-		const hasFrontendChanges = changes.any((change) => change.startsWith('frontend'));
+		const hasFrontendChanges = changes.some((change) => change.startsWith('frontend'));
 		if (hasFrontendChanges) {
 			commands.push('cd frontend');
-			const requiresReinstallInFrontend = changes.any((change) => change.startsWith('frontend/package'));
+			const requiresReinstallInFrontend = changes.some((change) => change.startsWith('frontend/package'));
 			if (requiresReinstallInFrontend) {
 				commands.push('npm install');
 			}
