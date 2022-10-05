@@ -15,7 +15,7 @@ const indexFile = path.resolve(__dirname, 'frontend', 'dist', 'index.html');
 app.use('/assets', express.static(path.resolve(__dirname, 'frontend', 'dist', 'assets')));
 app.get('/*', (req, res) => res.sendFile(indexFile));
 
-const PORT = 5103;
+const PORT = +(process.argv[2] || '5103');
 app.listen(PORT, function () {
 	console.info('Example running on Port: ' + PORT);
 });
