@@ -63,9 +63,9 @@ webhookRouter.post('/', async (req, res) => {
 			if (requiresReinstallInFrontend) {
 				commands.push('npm install');
 			}
-			commands.push('npm run build');
+			commands.push('npm run build', 'cd ..');
 		}
-		commands.push('cd ..', 'npm start');
+		commands.push('npm start');
 
 		const cmd = commands.join(' && ');
 		console.debug('Command to run:', cmd);
